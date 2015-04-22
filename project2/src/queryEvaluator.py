@@ -44,6 +44,7 @@ def subsets(iterable):
         for subset in itertools.combinations(items, k):
             yield subset
 
+
 # main function
 if __name__ == "__main__":
 	if len(sys.argv)!=3:
@@ -86,9 +87,8 @@ if __name__ == "__main__":
 		A = sorted(A, key = len)
 		# making the elements of the powerset into QueryNodes
 		for k in range(len(A)):
-			s = QueryNode(A[k])
-			S.append(s)
-		print i
+			z = QueryNode(A[k])
+			S.append(z)
 		# implementing Stage 1
 		for l in range(len(S)):
 			# choose best cost 
@@ -99,8 +99,14 @@ if __name__ == "__main__":
 				S[l].hasNoBranch = True
 			else:
 				S[l].bestCost = logCost
-			print l
-			S[l].displayArr()
+			#print l
+			#S[l].displayArr()
+		#implementing Stage 2
+		for s in S:
+			for s2 in S:
+				if s.checkIntersection(s2) != 0:
+					continue
+
 
 
 

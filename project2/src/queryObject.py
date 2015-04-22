@@ -49,6 +49,13 @@ class QueryNode:
 		k = self.numSubterms
 		cost = k*dict['r'] + (k-1)*dict['l'] + k*dict['f'] + dict['a']
 		return cost
+	def checkIntersection(self,s2):
+		ids_l1 = set(x.identifier for x in self.subterms)  # All ids in list 1
+		intersection = [item for item in s2.subterms if item.identifier in ids_l1]
+		if len(intersection) == 0:
+			return 0
+		else:
+			return 1
 	
 
 
