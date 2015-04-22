@@ -79,12 +79,16 @@ def processQuery(line,identifier,configArr):
 			elif s2.totalSelectivity <= 0.5 and w > w2 and z > z2:
 				continue
 			else: 
+				#calculate branch and cost and check if it is the best cost
 				c = s2.calculateBranchAndCost(s,configArr)
+				#union s and s2
 				union = list(set(s2.subterms) | set(s.subterms))
+				#find the QueryNode of this union in S
 				for s3 in S:
 					if set(union) == set(s3.subterms):
 						union = s3
 						break
+				#if c is the best cost, update the QueryNode
 				if c < union.bestCost:
 					for n in range(len(S)):
 						if S[n] == union:
