@@ -60,7 +60,19 @@ class QueryNode:
 			return 0
 		else:
 			return 1
-	
+	def calculateCmetric(self,d):
+		k = self.numSubterms
+		cost = k*d['r'] + (k-1)*d['l'] + k*d['f'] + d['t']
+		first = (self.totalSelectivity - 1)/cost
+		second = self.totalSelectivity
+		return first, second 
+
+	def calculateDmetric(self,d):
+		k = self.numSubterms
+		cost = k*d['r'] + (k-1)*d['l'] + k*d['f'] + d['t']
+		first = cost
+		second = self.totalSelectivity 
+		return first, second
 
 
 
