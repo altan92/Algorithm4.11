@@ -32,7 +32,9 @@ def processQuery(line,identifier):
 		f.write(str(num) + " ")
 	f.write('\n')
 
-
+def list_powerset(lst):
+    return reduce(lambda result, x: result + [subset + [x] for subset in result],
+                  lst, [[]])
 
 # main function
 if __name__ == "__main__":
@@ -56,6 +58,30 @@ if __name__ == "__main__":
 		line = line.split()
 		if len(line) != 0:
 			processQuery(line,i)
+
+	# creating the power set for each line 
+	for i in range(len(lines)-1):
+		lineArr = []
+		S =[]
+		line = lines[i]
+		line = line.split()
+		# making S into QueryObjects 
+		for j in range(len(line)):
+			temp = QueryObject(float(line[j]),j)
+			lineArr.append(temp)
+		# constructing the powerset
+		A = list_powerset(lineArr)
+		A.pop(0)
+		# making the elements of the powerset into QueryNodes
+		for k in range(len(A)):
+			s = QueryNode(A[k])
+			S.append(s)
+		print i
+		for l in range(len(S)):
+			print l
+			S[l].displayArr()
+
+
 
 
 
