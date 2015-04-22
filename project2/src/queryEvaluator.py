@@ -26,7 +26,7 @@ def read_files(file1,file2):
 		sys.exit(1)
 	return q, c
 
-def processQuery(line,identifier):
+def processQuery(line,identifier,configArr):
 	lineArr = []
 	S =[]
 	# check to see if arrary is empty
@@ -47,8 +47,8 @@ def processQuery(line,identifier):
 
 	# making the elements of the powerset into QueryNodes
 	for k in range(len(A)):
-		z = QueryNode(A[k])
-		S.append(z)
+		a = QueryNode(A[k])
+		S.append(a)
 
 	# implementing Stage 1
 	for l in range(len(S)):
@@ -61,13 +61,27 @@ def processQuery(line,identifier):
 		else:
 			S[l].bestCost = logCost
 		#print l
-		S[l].displayArr()
+		#S[l].displayArr()
 
 	#implementing Stage 2
 	for s in S:
 		for s2 in S:
+			# make sure s and s2 do not overlap
 			if s.checkIntersection(s2) != 0:
 				continue
+			# make sure suboptimal routines are skipped
+			x, y = s.calculateCmetric(configArr)
+			x2, y2 = s2.calculateCmetric(configArr)
+			w, z = s.calculateDmetric(configArr)
+			w2, z2 = s2.calculateDmetric(configArr)
+			if x >= x2 and y > y2:
+				continue 
+			else if s2.totalSelectivity <= 0.5 and w > w2 and z > z2:
+				continue
+			
+
+
+
 
 	# print line,identifier
 	# f = open("output_file{}".format(identifier),'w')
@@ -110,7 +124,7 @@ if __name__ == "__main__":
 		line = lines[i]
 		line = line.split()
 		if len(line) != 0:
-			processQuery(line,i)
+			processQuery(line,i,configArr)
 
 	# # creating the power set for each line 
 	# for i in range(len(lines)):
