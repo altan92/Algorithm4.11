@@ -4,7 +4,7 @@ import sys
 
 # defines usage for file
 def usage():
-    sys.stderr.write("Usage: python queryEvaluator.py [query.txt] [config.txt\n")
+    sys.stderr.write("Usage: python queryEvaluator.py [query.txt] [config.txt]\n")
 
 # opens up both files if it exists
 def read_files(file1,file2):
