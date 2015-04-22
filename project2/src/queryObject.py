@@ -44,7 +44,11 @@ class QueryNode:
 				dict['m']*q + self.totalSelectivity*dict['a']
 		return cost
 
-
+	def calculateNoBranchCost(self, dict):
+		cost = 0
+		k = self.numSubterms
+		cost = k*dict['r'] + (k-1)*dict['l'] + k*dict['f'] + dict['a']
+		return cost
 	
 
 

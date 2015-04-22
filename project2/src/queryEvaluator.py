@@ -91,8 +91,14 @@ if __name__ == "__main__":
 		print i
 		# implementing Stage 1
 		for l in range(len(S)):
-			# compute logical and cost
-			S[l].bestCost = S[l].calculateLogAndCost(configArr)
+			# choose best cost 
+			logCost = S[l].calculateLogAndCost(configArr)
+			noBranchCost = S[l].calculateNoBranchCost(configArr)
+			if(noBranchCost < logCost):
+				S[l].bestCost = noBranchCost 
+				S[l].hasNoBranch = True
+			else:
+				S[l].bestCost = logCost
 			print l
 			S[l].displayArr()
 
