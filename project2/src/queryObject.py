@@ -4,7 +4,7 @@ class QueryObject:
 		self.identifier = identifier
 	
 	def getTerm(self):
-		return "t{0}[o{0}[i]]".format(self.identifier)
+		return "t{0}[o{0}[i]]".format(self.identifier+1)
 
 	def __str__(self):
 		return "[[{1}]->selectivity={0}]".format(self.selectivity, self.identifier)
@@ -86,16 +86,19 @@ class QueryNode:
 		return cost
 
 
-def generateCode(root):
-	print root.bestCost
+def generateCode(root, line):
+	print '=================================================================='
+	print ' '.join(str(x) for x in line)
+	print '------------------------------------------------------------------'
 	boolean, noBranch = generateBoolean(root)
 	# print boolean
 	# noBranch = '(t1[o1[i]] & t2[o2[i]])'
+	dash = '------------------------------------------------------------------\ncost: ' + str(root.bestCost)
 	if not noBranch:
-		return "if {0}".format(boolean)+"{\n\tanswer[j++]=i;\n}"
+		return "if{0}".format(boolean)+" {\n\tanswer[j++] = i;\n}\n" + dash
 	else:
-		return "if {0}".format(boolean)+"{\n\tanswer[j]=i;\n\tj+="+"{0};\n".format(noBranch)+"}"
-
+		return "if{0}".format(boolean)+" {\n\tanswer[j] = i;\n\tj += "+"{0};\n".format(noBranch)+"}\n" + dash
+	
 
 def generateBoolean(root):
 	# initate variables

@@ -91,8 +91,7 @@ def processQuery(line,identifier,configArr):
 							S[n].bestCost = c
 							S[n].left = s2
 							S[n].right = s
-
-	print generateCode(S[-1])
+	print generateCode(S[-1], line)
 
 
 
