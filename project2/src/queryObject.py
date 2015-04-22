@@ -73,6 +73,21 @@ class QueryNode:
 		first = cost
 		second = self.totalSelectivity 
 		return first, second
+	
+	def calculateBranchAndCost(self,s,d):
+		k = self.numSubterms
+		p = self.totalSelectivity
+		if p < (1 - p):
+			q = p
+		else:
+			q = 1 - p
+		cost = k*d['r'] + (k-1)*d['l'] + k*d['f'] + d['t'] + \
+			d['m']*q +  p*s.bestCost
+		return cost
+
+
+
+
 
 
 
