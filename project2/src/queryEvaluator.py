@@ -71,11 +71,13 @@ if __name__ == "__main__":
 			processQuery(line,i)
 
 	# creating the power set for each line 
-	for i in range(len(lines)-1):
+	for i in range(len(lines)):
 		lineArr = []
 		S =[]
 		line = lines[i]
 		line = line.split()
+		if len(line) == 0:
+			continue
 		# making S into QueryObjects 
 		for j in range(len(line)):
 			temp = QueryObject(float(line[j]),j)
