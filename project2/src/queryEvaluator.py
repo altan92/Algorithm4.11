@@ -92,6 +92,8 @@ def processQuery(line,identifier,configArr):
 							S[n].left = s2
 							S[n].right = s
 
+	print generateCode(S[-1])
+
 
 
 

@@ -87,6 +87,7 @@ class QueryNode:
 
 
 def generateCode(root):
+	print root.bestCost
 	boolean, noBranch = generateBoolean(root)
 	# print boolean
 	# noBranch = '(t1[o1[i]] & t2[o2[i]])'
@@ -139,16 +140,16 @@ if __name__ == "__main__":
 	root = QueryNode([q1,q2,q3,q4])
 	temp = QueryNode([q1])
 	temp1 = QueryNode([q2,q3,q4])
-	root.addLeft(temp)
-	root.addRight(temp1)
+	root.left = temp
+	root.right = temp1
 	temp2 = QueryNode([q2])
 	temp3 = QueryNode([q3,q4])
-	temp1.addLeft(temp2)
-	temp1.addRight(temp3)
+	temp1.left = temp2
+	temp1.right = temp3
 	temp4 = QueryNode([q3])
 	temp5 = QueryNode([q4])
-	temp3.addLeft(temp4)
-	temp3.addRight(temp5)
+	temp3.left = temp4
+	temp3.right = temp5
 
 	print generateCode(root)
 
