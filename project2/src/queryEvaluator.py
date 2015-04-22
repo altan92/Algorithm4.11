@@ -27,11 +27,53 @@ def read_files(file1,file2):
 	return q, c
 
 def processQuery(line,identifier):
-	print line,identifier
-	f = open("output_file{}".format(identifier),'w')
-	for num in line:
-		f.write(str(num) + " ")
-	f.write('\n')
+	lineArr = []
+	S =[]
+	# check to see if arrary is empty
+	if len(line) == 0:
+		return
+
+	# making S into QueryObjects 
+	for j in range(len(line)):
+		temp = QueryObject(float(line[j]),j)
+		lineArr.append(temp)
+
+	# constructing the powerset
+	A = list_powerset(lineArr)
+	A.pop(0)
+
+	# sort A into increasing order
+	A = sorted(A, key = len)
+
+	# making the elements of the powerset into QueryNodes
+	for k in range(len(A)):
+		z = QueryNode(A[k])
+		S.append(z)
+
+	# implementing Stage 1
+	for l in range(len(S)):
+		# choose best cost 
+		logCost = S[l].calculateLogAndCost(configArr)
+		noBranchCost = S[l].calculateNoBranchCost(configArr)
+		if(noBranchCost < logCost):
+			S[l].bestCost = noBranchCost 
+			S[l].hasNoBranch = True
+		else:
+			S[l].bestCost = logCost
+		#print l
+		S[l].displayArr()
+
+	#implementing Stage 2
+	for s in S:
+		for s2 in S:
+			if s.checkIntersection(s2) != 0:
+				continue
+
+	# print line,identifier
+	# f = open("output_file{}".format(identifier),'w')
+	# for num in line:
+	# 	f.write(str(num) + " ")
+	# f.write('\n')
 
 def list_powerset(lst):
     return reduce(lambda result, x: result + [subset + [x] for subset in result],
@@ -70,44 +112,44 @@ if __name__ == "__main__":
 		if len(line) != 0:
 			processQuery(line,i)
 
-	# creating the power set for each line 
-	for i in range(len(lines)):
-		lineArr = []
-		S =[]
-		line = lines[i]
-		line = line.split()
-		if len(line) == 0:
-			continue
-		# making S into QueryObjects 
-		for j in range(len(line)):
-			temp = QueryObject(float(line[j]),j)
-			lineArr.append(temp)
-		# constructing the powerset
-		A = list_powerset(lineArr)
-		A.pop(0)
-		# sort A into increasing order
-		A = sorted(A, key = len)
-		# making the elements of the powerset into QueryNodes
-		for k in range(len(A)):
-			z = QueryNode(A[k])
-			S.append(z)
-		# implementing Stage 1
-		for l in range(len(S)):
-			# choose best cost 
-			logCost = S[l].calculateLogAndCost(configArr)
-			noBranchCost = S[l].calculateNoBranchCost(configArr)
-			if(noBranchCost < logCost):
-				S[l].bestCost = noBranchCost 
-				S[l].hasNoBranch = True
-			else:
-				S[l].bestCost = logCost
-			#print l
-			#S[l].displayArr()
-		#implementing Stage 2
-		for s in S:
-			for s2 in S:
-				if s.checkIntersection(s2) != 0:
-					continue
+	# # creating the power set for each line 
+	# for i in range(len(lines)):
+	# 	lineArr = []
+	# 	S =[]
+	# 	line = lines[i]
+	# 	line = line.split()
+	# 	if len(line) == 0:
+	# 		continue
+	# 	# making S into QueryObjects 
+	# 	for j in range(len(line)):
+	# 		temp = QueryObject(float(line[j]),j)
+	# 		lineArr.append(temp)
+	# 	# constructing the powerset
+	# 	A = list_powerset(lineArr)
+	# 	A.pop(0)
+	# 	# sort A into increasing order
+	# 	A = sorted(A, key = len)
+	# 	# making the elements of the powerset into QueryNodes
+	# 	for k in range(len(A)):
+	# 		z = QueryNode(A[k])
+	# 		S.append(z)
+	# 	# implementing Stage 1
+	# 	for l in range(len(S)):
+	# 		# choose best cost 
+	# 		logCost = S[l].calculateLogAndCost(configArr)
+	# 		noBranchCost = S[l].calculateNoBranchCost(configArr)
+	# 		if(noBranchCost < logCost):
+	# 			S[l].bestCost = noBranchCost 
+	# 			S[l].hasNoBranch = True
+	# 		else:
+	# 			S[l].bestCost = logCost
+	# 		#print l
+	# 		#S[l].displayArr()
+	# 	#implementing Stage 2
+	# 	for s in S:
+	# 		for s2 in S:
+	# 			if s.checkIntersection(s2) != 0:
+	# 				continue
 
 
 

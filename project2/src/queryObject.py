@@ -27,28 +27,32 @@ class QueryNode:
 			selectivity = selectivity * item.selectivity
 			# print item.selectivity
 		return selectivity
+
 	def displayArr(self):
 		for item in self.subterms:
 			print item
 		print self.bestCost
+
 	def returnArr(self):
 		return self.subterms
-	def calculateLogAndCost(self, dict):
+
+	def calculateLogAndCost(self, d):
 		cost = 0 
 		k = self.numSubterms
 		if self.totalSelectivity <= 0.5:
 			q = self.totalSelectivity
 		else:
 			q = 1 - self.totalSelectivity
-		cost = k * dict['r'] + (k-1)*dict['l'] + k*dict['f'] + dict['t'] + \
-				dict['m']*q + self.totalSelectivity*dict['a']
+		cost = k * d['r'] + (k-1)*d['l'] + k*d['f'] + d['t'] + \
+				d['m']*q + self.totalSelectivity*d['a']
 		return cost
 
-	def calculateNoBranchCost(self, dict):
+	def calculateNoBranchCost(self, d):
 		cost = 0
 		k = self.numSubterms
-		cost = k*dict['r'] + (k-1)*dict['l'] + k*dict['f'] + dict['a']
+		cost = k*d['r'] + (k-1)*d['l'] + k*d['f'] + d['a']
 		return cost
+
 	def checkIntersection(self,s2):
 		ids_l1 = set(x.identifier for x in self.subterms)  # All ids in list 1
 		intersection = [item for item in s2.subterms if item.identifier in ids_l1]
