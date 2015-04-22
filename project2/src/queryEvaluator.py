@@ -80,6 +80,17 @@ def processQuery(line,identifier,configArr):
 				continue
 			else: 
 				c = s2.calculateBranchAndCost(s,configArr)
+				union = list(set(s2.subterms) | set(s.subterms))
+				for s3 in S:
+					if set(union) == set(s3.subterms):
+						union = s3
+						break
+				if c < union.bestCost:
+					for n in range(len(S)):
+						if S[n] == union:
+							S[n].bestCost = c
+							S[n].left = s2
+							S[n].right = s
 
 
 

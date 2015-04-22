@@ -15,11 +15,6 @@ class QueryNode:
 		self.subterms = arr
 		self.totalSelectivity = self.calcSelectivity(arr)
 
-	def addLeft(left):
-		self.left = left
-
-	def addRight(right):
-		self.right = right
 
 	def calcSelectivity(self,arr):
 		selectivity = 1
