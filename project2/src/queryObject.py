@@ -2,6 +2,10 @@ class QueryObject:
 	def __init__(self, selectivity,identifier):
 		self.selectivity = selectivity
 		self.identifier = identifier
+	
+	def getTerm(self):
+		return "t{0}[o{0}[i]]".format(self.identifier)
+
 	def __str__(self):
 		return "[[{1}]->selectivity={0}]".format(self.selectivity, self.identifier)
 
@@ -15,10 +19,10 @@ class QueryNode:
 		self.subterms = arr
 		self.totalSelectivity = self.calcSelectivity(arr)
 
-	def addLeft(left):
+	def addLeft(self,left):
 		self.left = left
 
-	def addRight(right):
+	def addRight(self,right):
 		self.right = right
 
 	def calcSelectivity(self,arr):
@@ -60,6 +64,41 @@ class QueryNode:
 			return 0
 		else:
 			return 1
+
+
+def generateCode(root):
+	# initate variables
+	ans = ''
+	right = None
+	left = None
+
+	if (not root.left) and (not root.right):
+		ans += root.subterms[0].getTerm()
+		if len(root.subterms) >1:
+			for obj in root.subterms[1:]:
+				ans += ' & ' + obj.getTerm()
+			return '({})'.format(ans)
+		else:
+			return ans
+
+	#get left
+	if root.left:
+		left = generateCode(root.left)
+		ans += "{}".format(left)
+		# get right
+		if root.right:
+			right = generateCode(root.right)
+			ans += " && {}".format(right)
+		# print '{}'.format(ans)
+		return '({})'.format(ans)
+	else:
+		right = generateCode(root.right)
+		ans += "{}".format(right)
+		# print '( {} )'.format(ans)
+		return '({})'.format(ans)
+
+
+
 	
 
 
@@ -67,11 +106,23 @@ class QueryNode:
 if __name__ == "__main__":
 	q1 = QueryObject(.7,1)
 	q2 = QueryObject(.5,2)
+	q3 = QueryObject(.9,3)
+	q4 = QueryObject(.1,4)
 
+	# construct tree
+	root = QueryNode([q1,q2,q3,q4])
 	temp = QueryNode([q1,q2])
-	print temp.totalSelectivity
-	print temp.numSubterms
-	temp.displayArr()
-	print
-	print temp.returnArr()
+	temp1 = QueryNode([q2,q3,q4])
+	root.addLeft(temp)
+	root.addRight(temp1)
+	temp2 = QueryNode([q2])
+	temp3 = QueryNode([q3,q4])
+	temp1.addLeft(temp2)
+	temp1.addRight(temp3)
+	temp4 = QueryNode([q3])
+	temp5 = QueryNode([q4])
+	temp3.addLeft(temp4)
+	temp3.addRight(temp5)
+
+	print generateCode(root)
 
