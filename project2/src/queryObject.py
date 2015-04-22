@@ -91,43 +91,47 @@ class QueryNode:
 		return cost
 
 
-
-
-
-
 def generateCode(root):
+	boolean, noBranch = generateBoolean(root)
+	# print boolean
+	# noBranch = '(t1[o1[i]] & t2[o2[i]])'
+	if not noBranch:
+		return "if {0}".format(boolean)+"{\n\tanswer[j++]=i;\n}"
+	else:
+		return "if {0}".format(boolean)+"{\n\tanswer[j]=i;\n\tj+="+"{0};\n".format(noBranch)+"}"
+
+
+def generateBoolean(root):
 	# initate variables
 	ans = ''
 	right = None
 	left = None
+	noBranch = None
 
 	if (not root.left) and (not root.right):
 		ans += root.subterms[0].getTerm()
 		if len(root.subterms) >1:
 			for obj in root.subterms[1:]:
 				ans += ' & ' + obj.getTerm()
-			return '({})'.format(ans)
+			return '({})'.format(ans),noBranch
 		else:
-			return ans
+			return ans,noBranch
 
 	#get left
 	if root.left:
-		left = generateCode(root.left)
+		left,noBranch = generateBoolean(root.left)
 		ans += "{}".format(left)
 		# get right
 		if root.right:
-			right = generateCode(root.right)
+			right,noBranch = generateBoolean(root.right)
 			ans += " && {}".format(right)
 		# print '{}'.format(ans)
-		return '({})'.format(ans)
+		return '({})'.format(ans),noBranch
 	else:
-		right = generateCode(root.right)
+		right,noBranch = generateBoolean(root.right)
 		ans += "{}".format(right)
 		# print '( {} )'.format(ans)
-		return '({})'.format(ans)
-
-
-
+		return '({})'.format(ans),noBranch
 
 
 if __name__ == "__main__":
@@ -138,7 +142,7 @@ if __name__ == "__main__":
 
 	# construct tree
 	root = QueryNode([q1,q2,q3,q4])
-	temp = QueryNode([q1,q2])
+	temp = QueryNode([q1])
 	temp1 = QueryNode([q2,q3,q4])
 	root.addLeft(temp)
 	root.addRight(temp1)
