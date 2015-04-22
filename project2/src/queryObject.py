@@ -163,10 +163,8 @@ def generateBoolean(root):
 		ans += root.subterms[0].getTerm()
 		if len(root.subterms) >1:
 			for obj in root.subterms[1:]:
-				ans += ' & ' + obj.getTerm()
-			return '({})'.format(ans)
-		else:
-			return ans
+				ans += ' & ' + obj.getTerm()	
+		return ans
 
 	#get left
 	if root.left:
