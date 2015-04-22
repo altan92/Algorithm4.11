@@ -1,10 +1,11 @@
+from copy import deepcopy
 class QueryObject:
 	def __init__(self, selectivity,identifier):
 		self.selectivity = selectivity
 		self.identifier = identifier
 	
 	def getTerm(self):
-		return "t{0}[o{0}[i]]".format(self.identifier)
+		return "t{0}[o{0}[i]]".format(self.identifier+1)
 
 	def __str__(self):
 		return "[[{1}]->selectivity={0}]".format(self.selectivity, self.identifier)
@@ -19,11 +20,6 @@ class QueryNode:
 		self.subterms = arr
 		self.totalSelectivity = self.calcSelectivity(arr)
 
-	def addLeft(self,left):
-		self.left = left
-
-	def addRight(self,right):
-		self.right = right
 
 	def calcSelectivity(self,arr):
 		selectivity = 1
@@ -90,50 +86,103 @@ class QueryNode:
 			d['m']*q +  p*s.bestCost
 		return cost
 
+# check most rightmost node to see if no branch. If so remove it
+def checkRightmost(realRoot,root):
+	# check if root only node
+	if not root:
+		return realRoot,None
+	if not root.right:
+		# only node
+		if root.hasNoBranch:
+			ans = ''
+			ans += root.subterms[0].getTerm()
+			if len(root.subterms) > 1:
+				for obj in root.subterms[1:]:
+					ans += ' & ' + obj.getTerm()
+			if not root.left:
+				return None, '({})'.format(ans)
+			else:
+				return realRoot.left, '({})'.format(ans)
+		else:
+			return realRoot,None
 
-def generateCode(root):
-	noBranch = findRightmost(root)
-	if noBranch == None
-	boolean = generateBoolean(root)
+
+	temp = realRoot
+	while root.right:
+		root = root.right
+		if root.right:
+			temp = temp.right
+	if root.hasNoBranch:
+		temp.right = None
+		ans = ''
+		ans += root.subterms[0].getTerm()
+		if len(root.subterms) > 1:
+			for obj in root.subterms[1:]:
+				ans += ' & ' + obj.getTerm()
+		return realRoot, '({})'.format(ans)
+	else:
+		return realRoot,None
+
+
+def generateCode(root, line):
+	print '=================================================================='
+	print ' '.join(str(x) for x in line)
+	print '------------------------------------------------------------------'
+
+	# check for no branch
+	# find identifier of rightmost node
+	dash = '------------------------------------------------------------------\ncost: ' + str(root.bestCost)
+	root, noBranch = checkRightmost(root,deepcopy(root))
+	if root:
+		boolean = generateBoolean(root)
+	else:
+		if not noBranch:
+			return None
+		else:
+			return "answer[j] = i;\nj += "+"{0};\n\n".format(noBranch)+ dash
+	
+
+	
 	# print boolean
 	# noBranch = '(t1[o1[i]] & t2[o2[i]])'
+	dash = '------------------------------------------------------------------\ncost: ' + str(root.bestCost)
 	if not noBranch:
-		return "if {0}".format(boolean)+"{\n\tanswer[j++]=i;\n}"
+		return "if{0}".format(boolean)+" {\n\tanswer[j++] = i;\n}\n" + dash
 	else:
-		return "if {0}".format(boolean)+"{\n\tanswer[j]=i;\n\tj+="+"{0};\n".format(noBranch)+"}"
+		return "if{0}".format(boolean)+" {\n\tanswer[j] = i;\n\tj += "+"{0};\n".format(noBranch)+"}\n" + dash
+	
 
-
-def generateBoolean(root,identifier):
+def generateBoolean(root):
 	# initate variables
 	ans = ''
 	right = None
 	left = None
-	noBranch = None
+	
 
 	if (not root.left) and (not root.right):
 		ans += root.subterms[0].getTerm()
 		if len(root.subterms) >1:
 			for obj in root.subterms[1:]:
 				ans += ' & ' + obj.getTerm()
-			return '({})'.format(ans),noBranch
+			return '({})'.format(ans)
 		else:
-			return ans,noBranch
+			return ans
 
 	#get left
 	if root.left:
-		left,noBranch = generateBoolean(root.left)
+		left = generateBoolean(root.left)
 		ans += "{}".format(left)
 		# get right
 		if root.right:
-			right,noBranch = generateBoolean(root.right)
+			right = generateBoolean(root.right)
 			ans += " && {}".format(right)
 		# print '{}'.format(ans)
-		return '({})'.format(ans),noBranch
+		return '({})'.format(ans)
 	else:
-		right,noBranch = generateBoolean(root.right)
+		right = generateBoolean(root.right)
 		ans += "{}".format(right)
 		# print '( {} )'.format(ans)
-		return '({})'.format(ans),noBranch
+		return '({})'.format(ans)
 
 
 if __name__ == "__main__":
@@ -146,16 +195,16 @@ if __name__ == "__main__":
 	root = QueryNode([q1,q2,q3,q4])
 	temp = QueryNode([q1])
 	temp1 = QueryNode([q2,q3,q4])
-	root.addLeft(temp)
-	root.addRight(temp1)
+	root.left = temp
+	root.right = temp1
 	temp2 = QueryNode([q2])
 	temp3 = QueryNode([q3,q4])
-	temp1.addLeft(temp2)
-	temp1.addRight(temp3)
+	temp1.left = temp2
+	temp1.right = temp3
 	temp4 = QueryNode([q3])
 	temp5 = QueryNode([q4])
-	temp3.addLeft(temp4)
-	temp3.addRight(temp5)
+	temp3.left = temp4
+	temp3.right = temp5
 
 	print generateCode(root)
 
