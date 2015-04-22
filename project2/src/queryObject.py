@@ -30,8 +30,21 @@ class QueryNode:
 	def displayArr(self):
 		for item in self.subterms:
 			print item
+		print self.bestCost
 	def returnArr(self):
 		return self.subterms
+	def calculateLogAndCost(self, dict):
+		cost = 0 
+		k = self.numSubterms
+		if self.totalSelectivity <= 0.5:
+			q = self.totalSelectivity
+		else:
+			q = 1 - self.totalSelectivity
+		cost = k * dict['r'] + (k-1)*dict['l'] + k*dict['f'] + dict['t'] + \
+				dict['m']*q + self.totalSelectivity*dict['a']
+		return cost
+
+
 	
 
 
