@@ -92,7 +92,9 @@ class QueryNode:
 
 
 def generateCode(root):
-	boolean, noBranch = generateBoolean(root)
+	noBranch = findRightmost(root)
+	if noBranch == None
+	boolean = generateBoolean(root)
 	# print boolean
 	# noBranch = '(t1[o1[i]] & t2[o2[i]])'
 	if not noBranch:
@@ -101,7 +103,7 @@ def generateCode(root):
 		return "if {0}".format(boolean)+"{\n\tanswer[j]=i;\n\tj+="+"{0};\n".format(noBranch)+"}"
 
 
-def generateBoolean(root):
+def generateBoolean(root,identifier):
 	# initate variables
 	ans = ''
 	right = None
