@@ -76,9 +76,11 @@ def processQuery(line,identifier,configArr):
 			w2, z2 = s2.calculateDmetric(configArr)
 			if x >= x2 and y > y2:
 				continue 
-			else if s2.totalSelectivity <= 0.5 and w > w2 and z > z2:
+			elif s2.totalSelectivity <= 0.5 and w > w2 and z > z2:
 				continue
-			
+			else: 
+				c = s2.calculateBranchAndCost(s,configArr)
+
 
 
 
