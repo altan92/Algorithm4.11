@@ -2,6 +2,10 @@ class QueryObject:
 	def __init__(self, selectivity,identifier):
 		self.selectivity = selectivity
 		self.identifier = identifier
+	
+	def getTerm(self):
+		return "t{0}[o{0}[i]]".format(self.identifier)
+
 	def __str__(self):
 		return "[[{1}]->selectivity={0}]".format(self.selectivity, self.identifier)
 
@@ -55,6 +59,7 @@ class QueryNode:
 			return 0
 		else:
 			return 1
+			
 	def calculateCmetric(self,d):
 		k = self.numSubterms
 		cost = k*d['r'] + (k-1)*d['l'] + k*d['f'] + d['t']
@@ -81,19 +86,69 @@ class QueryNode:
 		return cost
 
 
+def generateCode(root):
+	boolean, noBranch = generateBoolean(root)
+	# print boolean
+	# noBranch = '(t1[o1[i]] & t2[o2[i]])'
+	if not noBranch:
+		return "if {0}".format(boolean)+"{\n\tanswer[j++]=i;\n}"
+	else:
+		return "if {0}".format(boolean)+"{\n\tanswer[j]=i;\n\tj+="+"{0};\n".format(noBranch)+"}"
 
 
+def generateBoolean(root):
+	# initate variables
+	ans = ''
+	right = None
+	left = None
+	noBranch = None
 
+	if (not root.left) and (not root.right):
+		ans += root.subterms[0].getTerm()
+		if len(root.subterms) >1:
+			for obj in root.subterms[1:]:
+				ans += ' & ' + obj.getTerm()
+			return '({})'.format(ans),noBranch
+		else:
+			return ans,noBranch
+
+	#get left
+	if root.left:
+		left,noBranch = generateBoolean(root.left)
+		ans += "{}".format(left)
+		# get right
+		if root.right:
+			right,noBranch = generateBoolean(root.right)
+			ans += " && {}".format(right)
+		# print '{}'.format(ans)
+		return '({})'.format(ans),noBranch
+	else:
+		right,noBranch = generateBoolean(root.right)
+		ans += "{}".format(right)
+		# print '( {} )'.format(ans)
+		return '({})'.format(ans),noBranch
 
 
 if __name__ == "__main__":
 	q1 = QueryObject(.7,1)
 	q2 = QueryObject(.5,2)
+	q3 = QueryObject(.9,3)
+	q4 = QueryObject(.1,4)
 
-	temp = QueryNode([q1,q2])
-	print temp.totalSelectivity
-	print temp.numSubterms
-	temp.displayArr()
-	print
-	print temp.returnArr()
+	# construct tree
+	root = QueryNode([q1,q2,q3,q4])
+	temp = QueryNode([q1])
+	temp1 = QueryNode([q2,q3,q4])
+	root.addLeft(temp)
+	root.addRight(temp1)
+	temp2 = QueryNode([q2])
+	temp3 = QueryNode([q3,q4])
+	temp1.addLeft(temp2)
+	temp1.addRight(temp3)
+	temp4 = QueryNode([q3])
+	temp5 = QueryNode([q4])
+	temp3.addLeft(temp4)
+	temp3.addRight(temp5)
+
+	print generateCode(root)
 
