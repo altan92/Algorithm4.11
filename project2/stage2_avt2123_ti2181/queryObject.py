@@ -1,15 +1,17 @@
 from copy import deepcopy
+#a basic term with a selectivity and an identifier
 class QueryObject:
 	def __init__(self, selectivity,identifier):
 		self.selectivity = selectivity
 		self.identifier = identifier
-	
+	#construct C code for the basic term
 	def getTerm(self):
 		return "t{0}[o{0}[i]]".format(self.identifier+1)
-
+	#string representation
 	def __str__(self):
 		return "[[{1}]->selectivity={0}]".format(self.selectivity, self.identifier)
 
+#a list of the basic terms which is considered a record
 class QueryNode:
 	def __init__(self, arr):
 		self.left = None
@@ -20,25 +22,26 @@ class QueryNode:
 		self.subterms = arr
 		self.totalSelectivity = self.calcSelectivity(arr)
 
-
+	#produce the combined selectivity of the basic terms
 	def calcSelectivity(self,arr):
 		selectivity = 1
 		for item in arr:
 			selectivity = selectivity * item.selectivity
 			# print item.selectivity
 		return selectivity
-
+	#prints out the basic terms
 	def displayArr(self):
 		for item in self.subterms:
 			print item
 		print self.bestCost
-
+	#returns the list of basic terms
 	def returnArr(self):
 		return self.subterms
-
+	#calculate the logical and cost
 	def calculateLogAndCost(self, d):
 		cost = 0 
 		k = self.numSubterms
+		#make sure it's the correct selectivity
 		if self.totalSelectivity <= 0.5:
 			q = self.totalSelectivity
 		else:
@@ -46,13 +49,14 @@ class QueryNode:
 		cost = k * d['r'] + (k-1)*d['l'] + k*d['f'] + d['t'] + \
 				d['m']*q + self.totalSelectivity*d['a']
 		return cost
-
+	#calculate the no branch cost
 	def calculateNoBranchCost(self, d):
 		cost = 0
 		k = self.numSubterms
 		cost = k*d['r'] + (k-1)*d['l'] + k*d['f'] + d['a']
 		return cost
-
+	#calculate the intersection between two lists of basic terms
+	#outputs 0 if the intersection is the empty set
 	def checkIntersection(self,s2):
 		ids_l1 = set(x.identifier for x in self.subterms)  # All ids in list 1
 		intersection = [item for item in s2.subterms if item.identifier in ids_l1]
@@ -60,28 +64,30 @@ class QueryNode:
 			return 0
 		else:
 			return 1
-			
+	#calculate the c metric of a QueryNode	
 	def calculateCmetric(self,d):
 		k = self.numSubterms
 		cost = k*d['r'] + (k-1)*d['l'] + k*d['f'] + d['t']
 		first = (self.totalSelectivity - 1)/cost
 		second = self.totalSelectivity
 		return first, second 
-
+	#calculate the d metric of a QueryNode
 	def calculateDmetric(self,d):
 		k = self.numSubterms
 		cost = k*d['r'] + (k-1)*d['l'] + k*d['f'] + d['t']
 		first = cost
 		second = self.totalSelectivity 
 		return first, second
-	
+	#calculate the branch and cost
 	def calculateBranchAndCost(self,s,d):
 		k = self.numSubterms
 		p = self.totalSelectivity
+		#choose the minimum value of p and 1-p
 		if p < (1 - p):
 			q = p
 		else:
 			q = 1 - p
+		# pc = p*s.bestCost
 		cost = k*d['r'] + (k-1)*d['l'] + k*d['f'] + d['t'] + \
 			d['m']*q +  p*s.bestCost
 		return cost
@@ -106,13 +112,14 @@ def checkRightmost(realRoot,root):
 		else:
 			return realRoot,None
 
-
+	#traverses to the right hand side of the tree
 	temp = realRoot
 	while root.right:
 		root = root.right
 		if root.right:
 			temp = temp.right
 	if root.hasNoBranch:
+		#set pointer to node to none
 		temp.right = None
 		ans = ''
 		ans += root.subterms[0].getTerm()

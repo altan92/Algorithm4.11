@@ -95,19 +95,13 @@ def processQuery(line,identifier,configArr):
 							S[n].bestCost = c
 							S[n].left = s2
 							S[n].right = s
+	#output the C code 
 	return generateCode(S[-1], line)
 
+#powerset function to generate S
 def list_powerset(lst):
     return reduce(lambda result, x: result + [subset + [x] for subset in result],
                   lst, [[]])
-
-def subsets(iterable):
-    "Generate the subsets of elements in the iterable, in order by length."
-    items = list(iterable)
-    for k in xrange(len(items) + 1):
-        for subset in itertools.combinations(items, k):
-            yield subset
-
 
 # main function
 if __name__ == "__main__":
