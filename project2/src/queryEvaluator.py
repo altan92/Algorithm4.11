@@ -95,17 +95,7 @@ def processQuery(line,identifier,configArr):
 							S[n].bestCost = c
 							S[n].left = s2
 							S[n].right = s
-	print generateCode(S[-1], line)
-
-
-
-
-
-	# print line,identifier
-	# f = open("output_file{}".format(identifier),'w')
-	# for num in line:
-	# 	f.write(str(num) + " ")
-	# f.write('\n')
+	return generateCode(S[-1], line)
 
 def list_powerset(lst):
     return reduce(lambda result, x: result + [subset + [x] for subset in result],
@@ -132,64 +122,18 @@ if __name__ == "__main__":
 		line = line.split()
 		if len(line) == 3:
 			configArr[line[0]] = float(line[2])
-	# print configArr
-	print configArr
+	c.close()
 	
-
 	# read every line in q and output a file for it
 	lines = q.read().split('\n')
+	q.close()
+	f = open("output_file.txt",'w')
 	for i in range(len(lines)):
 		line = lines[i]
 		line = line.split()
 		if len(line) != 0:
-			processQuery(line,i,configArr)
-
-	# # creating the power set for each line 
-	# for i in range(len(lines)):
-	# 	lineArr = []
-	# 	S =[]
-	# 	line = lines[i]
-	# 	line = line.split()
-	# 	if len(line) == 0:
-	# 		continue
-	# 	# making S into QueryObjects 
-	# 	for j in range(len(line)):
-	# 		temp = QueryObject(float(line[j]),j)
-	# 		lineArr.append(temp)
-	# 	# constructing the powerset
-	# 	A = list_powerset(lineArr)
-	# 	A.pop(0)
-	# 	# sort A into increasing order
-	# 	A = sorted(A, key = len)
-	# 	# making the elements of the powerset into QueryNodes
-	# 	for k in range(len(A)):
-	# 		z = QueryNode(A[k])
-	# 		S.append(z)
-	# 	# implementing Stage 1
-	# 	for l in range(len(S)):
-	# 		# choose best cost 
-	# 		logCost = S[l].calculateLogAndCost(configArr)
-	# 		noBranchCost = S[l].calculateNoBranchCost(configArr)
-	# 		if(noBranchCost < logCost):
-	# 			S[l].bestCost = noBranchCost 
-	# 			S[l].hasNoBranch = True
-	# 		else:
-	# 			S[l].bestCost = logCost
-	# 		#print l
-	# 		#S[l].displayArr()
-	# 	#implementing Stage 2
-	# 	for s in S:
-	# 		for s2 in S:
-	# 			if s.checkIntersection(s2) != 0:
-	# 				continue
-
-
-
-
-
-
-
-
-
-
+			output = processQuery(line,i,configArr)
+			f.write(output)
+			f.write('\n\n')
+	f.close()
 

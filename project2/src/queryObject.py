@@ -125,9 +125,9 @@ def checkRightmost(realRoot,root):
 
 
 def generateCode(root, line):
-	print '=================================================================='
-	print ' '.join(str(x) for x in line)
-	print '------------------------------------------------------------------'
+	intro = '==================================================================\n'
+	intro += ' '.join(str(x) for x in line) 
+	intro += '\n------------------------------------------------------------------\n'
 
 	# check for no branch
 	# find identifier of rightmost node
@@ -139,17 +139,15 @@ def generateCode(root, line):
 		if not noBranch:
 			return None
 		else:
-			return "answer[j] = i;\nj += "+"{0};\n\n".format(noBranch)+ dash
-	
-
+			return intro + "answer[j] = i;\nj += "+"{0};\n\n".format(noBranch)+ dash
 	
 	# print boolean
 	# noBranch = '(t1[o1[i]] & t2[o2[i]])'
 	dash = '------------------------------------------------------------------\ncost: ' + str(root.bestCost)
 	if not noBranch:
-		return "if{0}".format(boolean)+" {\n\tanswer[j++] = i;\n}\n" + dash
+		return intro + "if{0}".format(boolean)+" {\n\tanswer[j++] = i;\n}\n" + dash
 	else:
-		return "if{0}".format(boolean)+" {\n\tanswer[j] = i;\n\tj += "+"{0};\n".format(noBranch)+"}\n" + dash
+		return intro + "if{0}".format(boolean)+" {\n\tanswer[j] = i;\n\tj += "+"{0};\n".format(noBranch)+"}\n" + dash
 	
 
 def generateBoolean(root):
